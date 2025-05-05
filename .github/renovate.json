@@ -1,0 +1,51 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    ":maintainLockFilesMonthly",
+    "schedule:weekly",
+    ":automergeMinor",
+    ":semanticCommitTypeAll(chore)",
+    "helpers:pinGitHubActionDigests"
+  ],
+  "labels": ["dependencies"],
+  "rangeStrategy": "bump",
+  "customManagers": [
+    {
+      "customType": "regex",
+      "fileMatch": ["Cargo.toml"],
+      "matchStrings": [
+        "{.*git.*=.*\"(?<depName>.+)\".*,.*tag.*=.*\"(?<currentValue>.*)\".*}",
+        "{.*tag.*=.*\"(?<currentValue>.*)\".*,.*git.*=.*\"(?<depName>.+)\".*}"
+      ],
+      "datasourceTemplate": "git-tags"
+    }
+  ],
+  "packageRules": [
+    {
+      "description": "Do not update required python version",
+      "matchDepTypes": ["requires-python"],
+      "enabled": false
+    },
+    {
+      "description": "Group all rust `minor` and `patch` dependency updates",
+      "groupName": "all rust non-major dependencies",
+      "groupSlug": "rust-minor-patch",
+      "matchManagers": ["cargo"],
+      "matchUpdateTypes": ["minor", "patch"]
+    },
+    {
+      "description": "Group all python `minor` and `patch` dependency updates",
+      "groupName": "all python non-major dependencies",
+      "groupSlug": "python-minor-patch",
+      "matchManagers": ["pep621"],
+      "matchUpdateTypes": ["minor", "patch"]
+    },
+    {
+      "description": "Group ruff git dependency",
+      "groupName": "ruff git dependency",
+      "groupSlug": "ruff-git",
+      "matchDepNames": ["https://github.com/astral-sh/ruff.git"]
+    }
+  ]
+}
