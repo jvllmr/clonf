@@ -1,29 +1,21 @@
 from __future__ import annotations
-import typing as t
+
 from pydantic import BaseModel
 import functools
 
-import typing_extensions as te
-from ..annotations import ClonfAnnotation, CliArgument, CliOption
-from ..extractor import extract_cli_info
+
+from ...annotations import ClonfAnnotation, CliArgument, CliOption
+from ...extractor import extract_cli_info
 import typing as t
 import datetime
 import pathlib
 import uuid
+from .types import _CliFunc, _TReturn, _WrappedFunc
 
 try:
     import click
 except ImportError:  # pragma: no cover
     raise ImportError("clonf integration with click requires click to be installed")
-
-_TReturn = t.TypeVar("_TReturn", covariant=True)
-
-
-_CliFunc: te.TypeAlias = t.Callable[..., _TReturn]
-
-
-class _WrappedFunc(t.Protocol, t.Generic[_TReturn]):
-    def __call__(self, **kwargs: t.Any) -> _TReturn: ...
 
 
 def _extract_cli_info_click(model: type[BaseModel]) -> list[ClonfAnnotation]:
@@ -40,7 +32,6 @@ def _extract_cli_info_click(model: type[BaseModel]) -> list[ClonfAnnotation]:
 
         if isinstance(cli_info._type, click.ParamType):
             continue
-        print(cli_info._type)
         type_origin = t.get_origin(cli_info._type)
         if type_origin is t.Literal:
             literal_values = t.get_args(cli_info._type)
