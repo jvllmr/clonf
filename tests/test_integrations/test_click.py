@@ -1,7 +1,7 @@
 import pathlib
 import click
 from click.testing import CliRunner
-from clonf.integrations.click import clonf_click
+from clonf import clonf_click
 from pydantic import BaseModel, Field
 import typing as t
 from clonf import CliArgument, CliOption

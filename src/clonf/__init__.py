@@ -2,6 +2,11 @@ from .annotations import CliArgument, CliOption
 import typing as t
 import importlib
 
+if t.TYPE_CHECKING:
+    from clonf.integrations.click.types import TClonfClick
+
+    clonf_click: TClonfClick
+
 
 def __getattr__(name: str) -> t.Any:
     if name == "clonf_click":
