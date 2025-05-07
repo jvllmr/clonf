@@ -1,7 +1,7 @@
 import pathlib
 import click
 from click.testing import CliRunner
-from clonf import clonf_click
+from clonf.integrations.click import clonf_click
 from pydantic import BaseModel, Field
 import typing as t
 from clonf import CliArgument, CliOption
@@ -143,6 +143,19 @@ def test_click_datetime() -> None:
 
     assert len(what_is_value.params) == 1
     assert isinstance(what_is_value.params[0].type, click.DateTime)
+
+
+def test_click_bool() -> None:
+    class SimpleConfig(BaseModel):
+        value: t.Annotated[bool, CliArgument()] = False
+
+    @click.command()
+    @clonf_click
+    def what_is_value(config: SimpleConfig) -> None:
+        click.echo(f"The value is {config.value}")
+
+    assert len(what_is_value.params) == 1
+    assert what_is_value.params[0].type is click.BOOL
 
 
 def test_click_settings_sources_priority(tmp_path: pathlib.Path) -> None:

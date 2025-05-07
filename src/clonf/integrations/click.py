@@ -40,7 +40,7 @@ def _extract_cli_info_click(model: type[BaseModel]) -> list[ClonfAnnotation]:
 
         if isinstance(cli_info._type, click.ParamType):
             continue
-
+        print(cli_info._type)
         type_origin = t.get_origin(cli_info._type)
         if type_origin is t.Literal:
             literal_values = t.get_args(cli_info._type)
@@ -53,6 +53,8 @@ def _extract_cli_info_click(model: type[BaseModel]) -> list[ClonfAnnotation]:
             cli_info._type = click.Path(path_type=pathlib.Path)
         elif issubclass(cli_info._type, uuid.UUID):
             cli_info._type = click.UUID
+        elif issubclass(cli_info._type, bool):
+            cli_info._type = click.BOOL
         elif issubclass(cli_info._type, int) or issubclass(cli_info._type, float):
             range_kwargs = {
                 "min": cli_info._field_info._attributes_set.get("gt", None)
