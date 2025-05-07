@@ -1,5 +1,9 @@
 # clonf
 
+[![PyPI version](https://badge.fury.io/py/clonf.svg)](https://badge.fury.io/py/clonf)
+[![GitHub license](https://img.shields.io/github/license/jvllmr/clonf)](https://github.com/jvllmr/clonf/blob/main/LICENSE)
+![PyPI - Downloads](https://img.shields.io/pypi/dd/clonf)
+
 Declaratively connect cli and config definition using pydantic.
 
 ## Why another?
