@@ -93,7 +93,7 @@ def clonf_click(
             if arg == "return":
                 continue
             cli_info_names: set[str] = {
-                cli_info.name
+                cli_info.name.replace("-", "_")
                 for cli_info in cli_infos[arg]
                 if cli_info.name is not Ellipsis
             }
@@ -102,7 +102,10 @@ def clonf_click(
             for kwarg, v in selected_kwargs.items():
                 param: click.Parameter | None = None
                 for s_param in ctx.command.params:
-                    if s_param.name == kwarg:
+                    if (
+                        s_param.name is not None
+                        and s_param.name.replace("-", "_") == kwarg
+                    ):
                         param = s_param
                         break
                 if param is None:  # pragma: no cover

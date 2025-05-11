@@ -2,6 +2,7 @@ from .annotations import CliArgument, ClonfAnnotation, CliOption
 from pydantic import BaseModel
 from pydantic.fields import FieldInfo
 from pydantic_core import PydanticUndefined
+from pydantic import AliasChoices, AliasPath
 
 
 def _process_cli_argument(arg: CliArgument, field_info: FieldInfo) -> CliArgument:
