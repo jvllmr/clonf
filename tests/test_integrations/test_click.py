@@ -2,7 +2,7 @@ import pathlib
 import click
 from click.testing import CliRunner
 from clonf import clonf_click
-from pydantic import BaseModel, Field
+from pydantic import AliasChoices, BaseModel, Field
 import typing as t
 from clonf import CliArgument, CliOption
 import uuid
@@ -205,3 +205,25 @@ def test_click_multiple_models() -> None:
     result = runner.invoke(cli, catch_exceptions=False)
     assert result.exit_code == 0
     assert result.output == "42 1337\n"
+
+
+def test_click_alias() -> None:
+    class Config(BaseModel):
+        answer_value: t.Annotated[
+            int,
+            CliOption(),
+            Field(
+                alias="answer-value",
+                # defining validation aliases is required
+                validation_alias=AliasChoices("answer-value", "answer_value"),
+            ),
+        ] = 42
+
+    @click.command
+    @clonf_click
+    def cli(config: Config) -> None:
+        assert config.answer_value == 43
+        click.echo(f"{config.answer_value}")
+
+    result = runner.invoke(cli, ["--answer-value", "43"], catch_exceptions=False)
+    assert result.exit_code == 0
