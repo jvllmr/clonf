@@ -1,0 +1,28 @@
+name: Lint source code
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  mypy:
+    permissions:
+      contents: read
+    name: MyPy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+        with:
+          persist-credentials: false
+      - name: Setup PDM
+        uses: pdm-project/setup-pdm@94a823180e06fcde4ad29308721954a521c96ed0 # v4
+        with:
+          python-version: "3.9"
+          cache: true
+      - name: Install dependencies
+        run: pdm install --frozen-lock
+      - name: Run MyPy
+        run: pdm run mypy
