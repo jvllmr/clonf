@@ -21,3 +21,4 @@ class CliArgument(ClonfAnnotation):
 class CliOption(ClonfAnnotation):
     default: t.Any = field(default=...)
     prefix: str = field(default="--")
+    is_flag: bool = field(default=False)

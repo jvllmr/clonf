@@ -227,3 +227,21 @@ def test_click_alias() -> None:
 
     result = runner.invoke(cli, ["--answer-value", "43"], catch_exceptions=False)
     assert result.exit_code == 0
+
+
+def test_flag_value() -> None:
+    class Config(BaseModel):
+        flag: t.Annotated[bool, CliOption(is_flag=True)] = False
+
+    @click.command()
+    @clonf_click
+    def cli(config: Config) -> None:
+        click.echo(config.flag)
+
+    result = runner.invoke(cli, catch_exceptions=False)
+    assert result.exit_code == 0
+    assert result.output == "False\n"
+
+    result = runner.invoke(cli, ["--flag"], catch_exceptions=False)
+    assert result.exit_code == 0
+    assert result.output == "True\n"

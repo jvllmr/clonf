@@ -141,6 +141,7 @@ def clonf_click(
                     default=None if cli_info.default is Ellipsis else cli_info.default,
                     type=cli_info._type,
                     help=cli_info.description,
+                    is_flag=cli_info.is_flag,
                 )(wrapper)
 
     return wrapper
