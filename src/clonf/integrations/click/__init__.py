@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ValidationError
 import functools
 
 
@@ -16,6 +16,36 @@ try:
     import click
 except ImportError:  # pragma: no cover
     raise ImportError("clonf integration with click requires click to be installed")
+
+
+class ClickMapping(click.ParamType):
+    name = "mapping"
+
+    def __init__(self, type_: t.Any) -> None:
+        # pydantic will validate the input
+        class Validator(BaseModel):
+            field: type_
+
+        self._model_validator = Validator
+
+    def convert(
+        self, value: t.Any, param: click.Parameter | None, ctx: click.Context | None
+    ) -> dict[str, t.Any]:
+        try:
+            if isinstance(value, dict):  # pragma: no cover
+                self._model_validator(field=value)
+                return value
+            validated = self._model_validator.model_validate_json(
+                '{"field":' + value + "}"
+            )
+            return validated.field  # type: ignore[no-any-return]
+        except ValidationError as exc:
+            first_violation = exc.errors(include_url=False, include_context=False)[0]
+            self.fail(
+                f"{value!r} is not a valid mapping. Pydantic validation error: msg={first_violation['msg']!r} path={first_violation['loc'][1:]!r} input={first_violation['input']!r}",
+                param,
+                ctx,
+            )
 
 
 def _extract_cli_info_click(model: type[BaseModel]) -> list[ClonfAnnotation]:
@@ -36,6 +66,8 @@ def _extract_cli_info_click(model: type[BaseModel]) -> list[ClonfAnnotation]:
         if type_origin is t.Literal:
             literal_values = t.get_args(cli_info._type)
             cli_info._type = click.Choice(*literal_values)
+        elif type_origin is dict:
+            cli_info._type = ClickMapping(type_=cli_info._type)
         elif type_origin is not None:
             raise TypeError(f"Don't know how to handle type {type_origin}")
         elif issubclass(cli_info._type, (datetime.datetime, datetime.date)):

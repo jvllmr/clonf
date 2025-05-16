@@ -229,7 +229,7 @@ def test_click_alias() -> None:
     assert result.exit_code == 0
 
 
-def test_flag_value() -> None:
+def test_click_flag_value() -> None:
     class Config(BaseModel):
         flag: t.Annotated[bool, CliOption(is_flag=True)] = False
 
@@ -245,3 +245,30 @@ def test_flag_value() -> None:
     result = runner.invoke(cli, ["--flag"], catch_exceptions=False)
     assert result.exit_code == 0
     assert result.output == "True\n"
+
+
+def test_click_dict() -> None:
+    class Config(BaseModel):
+        mapping: t.Annotated[dict[str, int], CliOption(), Field(default_factory=dict)]
+        str_mapping: t.Annotated[
+            dict[str, str], CliOption(), Field(default_factory=dict)
+        ]
+
+    @click.command()
+    @clonf_click
+    def cli(config: Config) -> None:
+        click.echo(config.mapping)
+
+    result = runner.invoke(cli, ["--mapping", '{"value": 42}'], catch_exceptions=False)
+    assert result.exit_code == 0, result.output
+    assert result.output == "{'value': 42}\n", result.output
+
+    result = runner.invoke(
+        cli, ["--str_mapping", '{"value": 42}'], catch_exceptions=False
+    )
+
+    assert result.exit_code == 2, result.output
+    assert (
+        "Pydantic validation error: msg='Input should be a valid string' path=('value',) input=42"
+        in result.output
+    ), result.output

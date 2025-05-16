@@ -56,6 +56,7 @@ files = "src/clonf"
 strict = true
 
 [tool.pyright]
+reportInvalidTypeForm = false
 typeCheckingMode = "off"
 
 [tool.pytest.ini_options]
