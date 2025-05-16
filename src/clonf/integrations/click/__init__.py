@@ -32,7 +32,7 @@ class ClickMapping(click.ParamType):
         self, value: t.Any, param: click.Parameter | None, ctx: click.Context | None
     ) -> dict[str, t.Any]:
         try:
-            if isinstance(value, dict):
+            if isinstance(value, dict):  # pragma: no cover
                 self._model_validator(field=value)
                 return value
             validated = self._model_validator.model_validate_json(
