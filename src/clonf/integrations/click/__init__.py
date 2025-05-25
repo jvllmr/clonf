@@ -168,9 +168,14 @@ def clonf_click(
                 )(wrapper)
             elif isinstance(cli_info, CliOption):
                 assert isinstance(cli_info.name, str), "CliOption has no resolved name"
+                click_default = (
+                    None if cli_info.default is Ellipsis else cli_info.default
+                )
+                show_default = click_default is not None
                 click.option(
                     f"{cli_info.prefix}{cli_info.name}",
-                    default=None if cli_info.default is Ellipsis else cli_info.default,
+                    default=click_default,
+                    show_default=show_default,
                     type=cli_info._type,
                     help=cli_info.description,
                     is_flag=cli_info.is_flag,
