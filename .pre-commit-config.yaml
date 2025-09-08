@@ -4,7 +4,7 @@ ci:
 
 repos:
   - repo: https://github.com/woodruffw/zizmor-pre-commit
-    rev: v1.6.0
+    rev: v1.12.1
     hooks:
       - id: zizmor
   - repo: https://github.com/hadialqattan/pycln
@@ -16,21 +16,21 @@ repos:
           - --disable-all-dunder-policy
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: "v0.11.7"
+    rev: "v0.12.11"
     hooks:
       - id: ruff
         args:
           - --fix
       - id: ruff-format
   - repo: https://github.com/jvllmr/pre-commit-prettier
-    rev: v3.5.3
+    rev: v3.6.2
     hooks:
       - id: prettier
         additional_dependencies:
           - prettier@latest
           - prettier-plugin-toml@latest
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v5.0.0
+    rev: v6.0.0
     hooks:
       - id: check-yaml
       - id: end-of-file-fixer
