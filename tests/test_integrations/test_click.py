@@ -42,7 +42,7 @@ def test_click_int_range() -> None:
     @click.command()
     @clonf_click
     def what_is_value(config: SimpleConfig) -> None:
-        click.echo(f"The value is {config.value}")
+        click.echo(f"The value is {config.value}")  # pragma: no cover
 
     assert len(what_is_value.params) == 1
     assert isinstance(what_is_value.params[0].type, click.IntRange)
@@ -55,7 +55,7 @@ def test_click_float_range() -> None:
     @click.command()
     @clonf_click
     def what_is_value(config: SimpleConfig) -> None:
-        click.echo(f"The value is {config.value}")
+        click.echo(f"The value is {config.value}")  # pragma: no cover
 
     assert len(what_is_value.params) == 1
     assert isinstance(what_is_value.params[0].type, click.FloatRange)
@@ -68,7 +68,7 @@ def test_click_literal() -> None:
     @click.command()
     @clonf_click
     def what_is_answer(config: SimpleConfig) -> None:
-        click.echo(f"The answer is {config.answer}")
+        click.echo(f"The answer is {config.answer}")  # pragma: no cover
 
     assert len(what_is_answer.params) == 1
     assert isinstance(what_is_answer.params[0].type, click.Choice)
@@ -83,7 +83,7 @@ def test_click_unsupported_type() -> None:
         @click.command()
         @clonf_click
         def what_is_value(config: SimpleConfig) -> None:
-            click.echo(f"The answer is {config.value}")
+            click.echo(f"The answer is {config.value}")  # pragma: no cover
 
         runner.invoke(what_is_value)
 
@@ -95,7 +95,7 @@ def test_click_path() -> None:
     @click.command()
     @clonf_click
     def what_is_value(config: SimpleConfig) -> None:
-        click.echo(f"The value is {config.value}")
+        click.echo(f"The value is {config.value}")  # pragma: no cover
 
     assert len(what_is_value.params) == 1
     assert isinstance(what_is_value.params[0].type, click.Path)
@@ -110,7 +110,7 @@ def test_click_path_exists() -> None:
     @click.command()
     @clonf_click
     def what_is_value(config: SimpleConfig) -> None:
-        click.echo(f"The value is {config.value}")
+        click.echo(f"The value is {config.value}")  # pragma: no cover
 
     assert len(what_is_value.params) == 1
     assert (
@@ -126,7 +126,7 @@ def test_click_uuid() -> None:
     @click.command()
     @clonf_click
     def what_is_value(config: SimpleConfig) -> None:
-        click.echo(f"The value is {config.value}")
+        click.echo(f"The value is {config.value}")  # pragma: no cover
 
     assert len(what_is_value.params) == 1
     assert what_is_value.params[0].type is click.UUID
@@ -139,7 +139,7 @@ def test_click_datetime() -> None:
     @click.command()
     @clonf_click
     def what_is_value(config: SimpleConfig) -> None:
-        click.echo(f"The value is {config.value}")
+        click.echo(f"The value is {config.value}")  # pragma: no cover
 
     assert len(what_is_value.params) == 1
     assert isinstance(what_is_value.params[0].type, click.DateTime)
@@ -152,7 +152,7 @@ def test_click_bool() -> None:
     @click.command()
     @clonf_click
     def what_is_value(config: SimpleConfig) -> None:
-        click.echo(f"The value is {config.value}")
+        click.echo(f"The value is {config.value}")  # pragma: no cover
 
     assert len(what_is_value.params) == 1
     assert what_is_value.params[0].type is click.BOOL
