@@ -4,7 +4,7 @@ ci:
 
 repos:
   - repo: https://github.com/woodruffw/zizmor-pre-commit
-    rev: v1.13.0
+    rev: v1.14.2
     hooks:
       - id: zizmor
   - repo: https://github.com/hadialqattan/pycln
@@ -16,7 +16,7 @@ repos:
           - --disable-all-dunder-policy
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: "v0.13.1"
+    rev: "v0.14.0"
     hooks:
       - id: ruff
         args:
