@@ -8,13 +8,16 @@ if t.TYPE_CHECKING:
     clonf_click: TClonfClick
 
 
+_dynamic_imports: dict[str, str] = {"clonf_click": "clonf.integrations.click"}
+
+
 def __getattr__(name: str) -> t.Any:
-    if name == "clonf_click":
-        return getattr(importlib.import_module("clonf.integrations.click"), name)
+    if name in _dynamic_imports:
+        return getattr(importlib.import_module(_dynamic_imports[name]), name)
 
     raise AttributeError(  # pragma: no cover
         f"module {__name__!r} has no attribute {name!r}"
     )
 
 
-__all__ = ["CliArgument", "CliOption", "clonf_click"]
+__all__ = ["CliArgument", "CliOption", "_dynamic_imports", "clonf_click"]
