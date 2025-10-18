@@ -31,6 +31,7 @@ class ClickMapping(click.ParamType):
     def convert(
         self, value: t.Any, param: click.Parameter | None, ctx: click.Context | None
     ) -> dict[str, t.Any]:
+        print(value)
         try:
             if isinstance(value, dict):  # pragma: no cover
                 self._model_validator(field=value)
@@ -179,6 +180,7 @@ def clonf_click(
                     type=cli_info._type,
                     help=cli_info.description,
                     is_flag=cli_info.is_flag,
+                    multiple=cli_info.multiple,
                 )(wrapper)
 
     return wrapper

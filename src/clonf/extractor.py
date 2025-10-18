@@ -2,6 +2,9 @@ from .annotations import CliArgument, ClonfAnnotation, CliOption
 from pydantic import BaseModel
 from pydantic.fields import FieldInfo
 from pydantic_core import PydanticUndefined
+from types import GenericAlias
+
+import typing as t
 
 
 def _process_cli_argument(arg: CliArgument, field_info: FieldInfo) -> CliArgument:
@@ -31,6 +34,12 @@ def extract_cli_info(model: type[BaseModel]) -> list[ClonfAnnotation]:
 
             meta._field_info = field_info
             meta._type = field_info.annotation
+
+            if meta._type is not None:
+                type_origin = t.get_origin(meta._type)
+                if type_origin is not None:
+                    if type_origin is dict or type_origin is list:
+                        meta.multiple = True
 
             if meta.name is Ellipsis:
                 meta.name = field_info.alias or field

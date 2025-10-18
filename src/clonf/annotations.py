@@ -10,6 +10,7 @@ class ClonfAnnotation:
     description: str | None = field(default=None)
     _type: t.Any | None = field(default=None, init=False)
     _field_info: FieldInfo | None = field(default=None, init=False)
+    multiple: bool = field(default=False)
 
 
 @dataclass
