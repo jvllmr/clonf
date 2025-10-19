@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pydantic import BaseModel, ValidationError
 import functools
-
+import itertools
 
 from ...annotations import ClonfAnnotation, CliArgument, CliOption
 from ...extractor import extract_cli_info
@@ -11,42 +11,12 @@ import datetime
 import pathlib
 import uuid
 from .types import _CliFunc, _TReturn, _WrappedFunc
+from .params import ClickMapping
 
 try:
     import click
 except ImportError:  # pragma: no cover
     raise ImportError("clonf integration with click requires click to be installed")
-
-
-class ClickMapping(click.ParamType):
-    name = "mapping"
-
-    def __init__(self, type_: t.Any) -> None:
-        # pydantic will validate the input
-        class Validator(BaseModel):
-            field: type_
-
-        self._model_validator = Validator
-
-    def convert(
-        self, value: t.Any, param: click.Parameter | None, ctx: click.Context | None
-    ) -> dict[str, t.Any]:
-        print(value)
-        try:
-            if isinstance(value, dict):  # pragma: no cover
-                self._model_validator(field=value)
-                return value
-            validated = self._model_validator.model_validate_json(
-                '{"field":' + value + "}"
-            )
-            return validated.field  # type: ignore[no-any-return]
-        except ValidationError as exc:
-            first_violation = exc.errors(include_url=False, include_context=False)[0]
-            self.fail(
-                f"{value!r} is not a valid mapping. Pydantic validation error: msg={first_violation['msg']!r} path={first_violation['loc'][1:]!r} input={first_violation['input']!r}",
-                param,
-                ctx,
-            )
 
 
 def _extract_cli_info_click(model: type[BaseModel]) -> list[ClonfAnnotation]:
@@ -146,6 +116,11 @@ def clonf_click(
                 default = param.get_default(ctx)
                 if default == v:
                     to_remove.append(kwarg)
+                if cli_info.multiple and isinstance(v, tuple):
+                    if isinstance(cli_info._type, ClickMapping):
+                        selected_kwargs[kwarg] = {}
+                        for subv in v:
+                            selected_kwargs[kwarg] |= subv
 
             for kwarg in to_remove:
                 del selected_kwargs[kwarg]
