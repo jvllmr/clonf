@@ -13,7 +13,7 @@ There are a lot of tools out there which try to bring cli libraries and pydantic
 ### Key differences to other pydantic x cli libraries
 
 - CLI behavior is opt-in.
-- designed to work well with `pydantic-settings`.
+- Designed to work well with `pydantic-settings`.
 - As much as possible is done via annotations. Combined with pydantic best practices, this encourages creating a single source of truth inside your codebase.
 
 ## Installation
