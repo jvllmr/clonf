@@ -58,7 +58,7 @@ if __name__ == "__main__":
 #### Using click types
 
 Similar to `pydanclick`, the following types will be converted automatically:
-| Python type | Click type | Input format example |
+| Python type | Click type | CLI input format example |
 | ------------ | ------------------- | ------ |
 | `bool` | `click.BOOL` | `true`, `false` |
 | `str` | `click.STRING` | `value` |
