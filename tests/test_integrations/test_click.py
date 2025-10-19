@@ -259,6 +259,36 @@ def test_click_dict() -> None:
     def cli(config: Config) -> None:
         click.echo(config.mapping)
 
+    result = runner.invoke(
+        cli, ["--mapping", "value=69", "--mapping", "value=42"], catch_exceptions=False
+    )
+    assert result.exit_code == 0, result.output
+    assert result.output == "{'value': 42}\n", result.output
+
+    result = runner.invoke(
+        cli,
+        [
+            "--mapping",
+            "value=69,value=42",
+        ],
+        catch_exceptions=False,
+    )
+    assert result.exit_code == 0, result.output
+    assert result.output == "{'value': 42}\n", result.output
+
+
+def test_click_dict_json() -> None:
+    class Config(BaseModel):
+        mapping: t.Annotated[dict[str, int], CliOption(), Field(default_factory=dict)]
+        str_mapping: t.Annotated[
+            dict[str, str], CliOption(), Field(default_factory=dict)
+        ]
+
+    @click.command()
+    @clonf_click
+    def cli(config: Config) -> None:
+        click.echo(config.mapping)
+
     result = runner.invoke(cli, ["--mapping", '{"value": 42}'], catch_exceptions=False)
     assert result.exit_code == 0, result.output
     assert result.output == "{'value': 42}\n", result.output
