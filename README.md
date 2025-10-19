@@ -13,6 +13,7 @@ There are a lot of tools out there which try to bring cli libraries and pydantic
 ### Key differences to other pydantic x cli libraries
 
 - CLI behavior is opt-in.
+- Designed to work well with `pydantic-settings`.
 - As much as possible is done via annotations. Combined with pydantic best practices, this encourages creating a single source of truth inside your codebase.
 
 ## Installation
@@ -57,18 +58,19 @@ if __name__ == "__main__":
 #### Using click types
 
 Similar to `pydanclick`, the following types will be converted automatically:
-| Python type | Click type |
-| :--------------------------------------- | :------------------- |
-| `bool` | `click.BOOL` |
-| `str` | `click.STRING` |
-| `int` | `click.INT` |
-| `float` | `click.FLOAT` |
-| `Annotated[int, Field(lt=..., ge=...)` | `click.IntRange()` |
-| `Annotated[float, Field(lt=..., ge=...)` | `click.FloatRange()` |
-| `pathlib.Path` | `click.Path()` |
-| `uuid.UUID` | `click.UUID` |
-| `datetime.datetime`, `datetime.date` | `click.DateTime()` |
-| `Literal` | `click.Choice` |
+| Python type | Click type | CLI input format example |
+| ------------ | ------------------- | ------ |
+| `bool` | `click.BOOL` | `true`, `false` |
+| `str` | `click.STRING` | `value` |
+| `int` | `click.INT` | `1` |
+| `float` | `click.FLOAT` | `1.2` |
+| `Annotated[int, Field(lt=..., ge=...)` | `click.IntRange()` | `2` |
+| `Annotated[float, Field(lt=..., ge=...)` | `click.FloatRange()` | `4.2` |
+| `pathlib.Path` | `click.Path()` | `/etc/path` |
+| `uuid.UUID` | `click.UUID` | `9b5a1c83-3b6a-46b1-9c79-4b67e02b0e0f` |
+| `datetime.datetime`, `datetime.date` | `click.DateTime()` | `2025-10-19`, `2025-10-19T19:10:42`, `2025-10-19 19:10:42` |
+| `Literal` | `click.Choice` | `value` |
+| `dict` | `clonf.integrations.click.params.ClickMapping` | `key1=value1`,`key1=value1,key2=value2`
 
 Additionally, custom click types can be passed via annotations to have finer control over the resulting click type:
 
