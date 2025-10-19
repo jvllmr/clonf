@@ -1,16 +1,8 @@
 from __future__ import annotations
 
 from pydantic import BaseModel, ValidationError
-import functools
-import itertools
 
-from ...annotations import ClonfAnnotation, CliArgument, CliOption
-from ...extractor import extract_cli_info
 import typing as t
-import datetime
-import pathlib
-import uuid
-from .types import _CliFunc, _TReturn, _WrappedFunc
 import click
 import re
 

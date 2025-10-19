@@ -2,7 +2,6 @@ from .annotations import CliArgument, ClonfAnnotation, CliOption
 from pydantic import BaseModel
 from pydantic.fields import FieldInfo
 from pydantic_core import PydanticUndefined
-from types import GenericAlias
 
 import typing as t
 

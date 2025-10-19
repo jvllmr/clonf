@@ -1,8 +1,7 @@
 from __future__ import annotations
 
-from pydantic import BaseModel, ValidationError
+from pydantic import BaseModel
 import functools
-import itertools
 
 from ...annotations import ClonfAnnotation, CliArgument, CliOption
 from ...extractor import extract_cli_info
