@@ -10,7 +10,7 @@ import datetime
 import pathlib
 import uuid
 from .types import _CliFunc, _TReturn, _WrappedFunc
-from .params import ClickMapping
+from .params import ClickList, ClickMapping
 
 try:
     import click
@@ -38,6 +38,8 @@ def _extract_cli_info_click(model: type[BaseModel]) -> list[ClonfAnnotation]:
             cli_info._type = click.Choice(*literal_values)
         elif type_origin is dict:
             cli_info._type = ClickMapping(type_=cli_info._type)
+        elif type_origin is list:
+            cli_info._type = ClickList(type_=cli_info._type)
         elif type_origin is not None:
             raise TypeError(f"Don't know how to handle type {type_origin}")
         elif issubclass(cli_info._type, (datetime.datetime, datetime.date)):
@@ -120,6 +122,10 @@ def clonf_click(
                         selected_kwargs[kwarg] = {}
                         for subv in v:
                             selected_kwargs[kwarg] |= subv
+                    elif isinstance(cli_info._type, ClickList):
+                        selected_kwargs[kwarg] = []
+                        for subv in v:
+                            selected_kwargs[kwarg].extend(subv)
 
             for kwarg in to_remove:
                 del selected_kwargs[kwarg]
