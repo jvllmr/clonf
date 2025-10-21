@@ -302,3 +302,54 @@ def test_click_dict_json() -> None:
         "Pydantic validation error: msg='Input should be a valid string' path=('value',) input=42"
         in result.output
     ), result.output
+
+
+def test_click_list() -> None:
+    class Config(BaseModel):
+        list: t.Annotated[list[int], CliOption(), Field(default_factory=list)]
+        str_mapping: t.Annotated[list[str], CliOption(), Field(default_factory=list)]
+
+    @click.command()
+    @clonf_click
+    def cli(config: Config) -> None:
+        click.echo(config.list)
+
+    result = runner.invoke(
+        cli, ["--list", "69", "--list", "42"], catch_exceptions=False
+    )
+    assert result.exit_code == 0, result.output
+    assert result.output == "[69, 42]\n", result.output
+
+    result = runner.invoke(
+        cli,
+        [
+            "--list",
+            "69,42",
+        ],
+        catch_exceptions=False,
+    )
+    assert result.exit_code == 0, result.output
+    assert result.output == "[69, 42]\n", result.output
+
+
+def test_click_list_json() -> None:
+    class Config(BaseModel):
+        list: t.Annotated[list[int], CliOption(), Field(default_factory=list)]
+        str_list: t.Annotated[list[str], CliOption(), Field(default_factory=list)]
+
+    @click.command()
+    @clonf_click
+    def cli(config: Config) -> None:
+        click.echo(config.list)
+
+    result = runner.invoke(cli, ["--list", "[42]"], catch_exceptions=False)
+    assert result.exit_code == 0, result.output
+    assert result.output == "[42]\n", result.output
+
+    result = runner.invoke(cli, ["--str_list", "[42]"], catch_exceptions=False)
+
+    assert result.exit_code == 2, result.output
+    assert (
+        "Pydantic validation error: msg='Input should be a valid string' path=(0,) input=42"
+        in result.output
+    ), result.output
