@@ -353,3 +353,19 @@ def test_click_list_json() -> None:
         "Pydantic validation error: msg='Input should be a valid string' path=(0,) input=42"
         in result.output
     ), result.output
+
+
+def test_click_dict_and_list() -> None:
+    class Config(BaseModel):
+        mapping: t.Annotated[dict[str, int], CliOption(), Field(default_factory=dict)]
+        list: t.Annotated[list[int], CliOption(), Field(default_factory=list)]
+
+    @click.command()
+    @clonf_click
+    def cli(config: Config) -> None:
+        click.echo(config.list)
+        click.echo(config.mapping)
+
+    result = runner.invoke(cli, catch_exceptions=False)
+
+    assert result.exit_code == 0, result.output
