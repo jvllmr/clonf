@@ -117,12 +117,13 @@ def clonf_click(
                 default = param.get_default(ctx)
                 if default == v:
                     to_remove.append(kwarg)
-                if cli_info.multiple and isinstance(v, tuple):
-                    if isinstance(cli_info._type, ClickMapping):
+
+                if param.multiple and isinstance(v, tuple):
+                    if isinstance(param.type, ClickMapping):
                         selected_kwargs[kwarg] = {}
                         for subv in v:
                             selected_kwargs[kwarg] |= subv
-                    elif isinstance(cli_info._type, ClickList):
+                    elif isinstance(param.type, ClickList):
                         selected_kwargs[kwarg] = []
                         for subv in v:
                             selected_kwargs[kwarg].extend(subv)
