@@ -136,13 +136,11 @@ def clonf_click(
                         for subv in v:
                             selected_kwargs[kwarg].extend(subv)
 
-            sub_models: dict[str, type[BaseModel]] = {}
             sub_kwargs: defaultdict[str, dict[str, t.Any]] = defaultdict(dict)
 
             for cli_info in cli_infos[arg]:
                 if cli_info._sub_path is not None:
-                    path, model = cli_info._sub_path
-                    sub_models[path] = model
+                    path = cli_info._sub_path
                     kwarg = cli_info.kwarg
                     if kwarg in selected_kwargs:
                         sub_kwargs[path][cli_info.unprefixed_kwarg] = selected_kwargs[
@@ -150,14 +148,12 @@ def clonf_click(
                         ]
                         to_remove.add(kwarg)
 
-            for path in sorted(sub_models.keys(), key=lambda x: -x.count(".")):
-                model = sub_models[path]
-                model_instance = model(**sub_kwargs[path])
+            for path in sorted(sub_kwargs.keys(), key=lambda x: -x.count(".")):
                 if "." in path:
                     parent_path, parent_kwarg = path.rsplit(".", 1)
-                    sub_kwargs[parent_path][parent_kwarg] = model_instance
+                    sub_kwargs[parent_path][parent_kwarg] = sub_kwargs[path]
                 else:
-                    selected_kwargs[path] = model_instance
+                    selected_kwargs[path] = sub_kwargs[path]
 
             for kwarg in to_remove:
                 del selected_kwargs[kwarg]

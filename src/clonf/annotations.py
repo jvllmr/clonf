@@ -17,7 +17,7 @@ class ClonfAnnotation:
     _type: t.Any | None = field(default=None, init=False)
     _field_info: FieldInfo | None = field(default=None, init=False)
     multiple: bool = field(default=False)
-    _sub_path: tuple[str, type[BaseModel]] | None = field(default=None, init=False)
+    _sub_path: str | None = field(default=None, init=False)
 
     @property
     def kwarg(self) -> str:
@@ -29,7 +29,7 @@ class ClonfAnnotation:
         kwarg = self.kwarg
         if self._sub_path is None:  # pragma: no cover
             return kwarg
-        prefix = self._sub_path[0]
+        prefix = self._sub_path
 
         return kwarg[len(prefix) + 1 :]
 
