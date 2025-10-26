@@ -369,3 +369,39 @@ def test_click_dict_and_list() -> None:
     result = runner.invoke(cli, catch_exceptions=False)
 
     assert result.exit_code == 0, result.output
+
+
+def test_click_sub_models() -> None:
+    class SubSubConfig(BaseModel):
+        key: t.Annotated[str, CliOption(), Field(default="")]
+
+    class SubConfig(
+        BaseModel,
+    ):
+        key: t.Annotated[str, CliOption(), Field(default="")]
+        sub: SubSubConfig
+
+    class SubConfigSettings(BaseSettings):
+        key: t.Annotated[str, CliOption(), Field(default="")]
+
+    class ConfigSettings(BaseSettings):
+        sub2: SubConfigSettings
+
+    class Config(BaseModel):
+        sub1: SubConfig
+
+    @click.command()
+    @clonf_click
+    def cli(config: Config, settings: ConfigSettings) -> None:
+        click.echo(config.sub1.key)
+        click.echo(settings.sub2.key)
+        click.echo(config.sub1.sub.key)
+
+    result = runner.invoke(
+        cli,
+        ["--sub1-key", "val1", "--sub2-key", "val2", "--sub1-sub-key", "val3"],
+        catch_exceptions=False,
+    )
+
+    assert result.exit_code == 0, result.output
+    assert result.output == "val1\nval2\nval3\n", result.output

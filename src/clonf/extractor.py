@@ -1,4 +1,9 @@
-from .annotations import CliArgument, ClonfAnnotation, CliOption
+from .annotations import (
+    CliArgument,
+    ClonfAnnotation,
+    CliOption,
+    is_pydantic_model_annotation,
+)
 from pydantic import BaseModel
 from pydantic.fields import FieldInfo
 from pydantic_core import PydanticUndefined
@@ -27,6 +32,22 @@ def extract_cli_info(model: type[BaseModel]) -> list[ClonfAnnotation]:
     extracted: list[ClonfAnnotation] = []
 
     for field, field_info in model.model_fields.items():
+        if field_info.annotation is not None and is_pydantic_model_annotation(
+            field_info.annotation
+        ):
+            sub_cli_infos = extract_cli_info(field_info.annotation)
+            for sub_cli_info in sub_cli_infos:
+                name = field_info.alias or field
+                sub_cli_info.name = f"{name}-{sub_cli_info.name}"
+                if sub_cli_info._sub_path is None:
+                    sub_cli_info._sub_path = (name, field_info.annotation)
+                else:
+                    sub_cli_info._sub_path = (
+                        f"{name}.{sub_cli_info._sub_path[0]}",
+                        sub_cli_info._sub_path[1],
+                    )
+            extracted.extend(sub_cli_infos)
+
         for meta in field_info.metadata:
             if not isinstance(meta, ClonfAnnotation):
                 continue
