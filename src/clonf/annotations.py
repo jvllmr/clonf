@@ -27,7 +27,7 @@ class ClonfAnnotation:
     @property
     def unprefixed_kwarg(self) -> str:
         kwarg = self.kwarg
-        if self._sub_path is None:
+        if self._sub_path is None:  # pragma: no cover
             return kwarg
         prefix = self._sub_path[0]
 
