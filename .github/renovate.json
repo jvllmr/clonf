@@ -11,6 +11,9 @@
   ],
   "labels": ["dependencies"],
   "rangeStrategy": "bump",
+  "pre-commit": {
+    "enabled": true
+  },
   "packageRules": [
     {
       "description": "Do not update required python version",
