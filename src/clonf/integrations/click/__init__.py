@@ -1,9 +1,16 @@
 from __future__ import annotations
+from collections import defaultdict
 
 from pydantic import BaseModel
 import functools
 
-from ...annotations import ClonfAnnotation, CliArgument, CliOption
+
+from ...annotations import (
+    ClonfAnnotation,
+    CliArgument,
+    CliOption,
+    is_pydantic_model_annotation,
+)
 from ...extractor import extract_cli_info
 import typing as t
 import datetime
@@ -96,13 +103,15 @@ def clonf_click(
         for arg, ann in func_annotations.items():
             if arg == "return":
                 continue
-            cli_info_names: set[str] = {
-                cli_info.name.replace("-", "_")
-                for cli_info in cli_infos[arg]
-                if cli_info.name is not Ellipsis
+            assert issubclass(ann, BaseModel), (
+                f"Input type {ann} is not a subclass of BaseModel"
+            )
+
+            cli_info_args: set[str] = {cli_info.kwarg for cli_info in cli_infos[arg]}
+            selected_kwargs = {k: v for k, v in kwargs.items() if k in cli_info_args}
+            to_remove: set[str] = {
+                *(),
             }
-            selected_kwargs = {k: v for k, v in kwargs.items() if k in cli_info_names}
-            to_remove: list[str] = []
             for kwarg, v in selected_kwargs.items():
                 param: click.Parameter | None = None
                 for s_param in ctx.command.params:
@@ -116,7 +125,7 @@ def clonf_click(
                     raise ValueError(f"Could not find parameter for input: {kwarg}")
                 default = param.get_default(ctx)
                 if default == v:
-                    to_remove.append(kwarg)
+                    to_remove.add(kwarg)
 
                 if param.multiple and isinstance(v, tuple):
                     if isinstance(param.type, ClickMapping):
@@ -127,6 +136,29 @@ def clonf_click(
                         selected_kwargs[kwarg] = []
                         for subv in v:
                             selected_kwargs[kwarg].extend(subv)
+
+            sub_models: dict[str, type[BaseModel]] = {}
+            sub_kwargs: defaultdict[str, dict[str, t.Any]] = defaultdict(dict)
+
+            for cli_info in cli_infos[arg]:
+                if cli_info._sub_path is not None:
+                    path, model = cli_info._sub_path
+                    sub_models[path] = model
+                    kwarg = cli_info.kwarg
+                    if kwarg in selected_kwargs:
+                        sub_kwargs[path][cli_info.unprefixed_kwarg] = selected_kwargs[
+                            kwarg
+                        ]
+                        to_remove.add(kwarg)
+
+            for path in sorted(sub_models.keys(), key=lambda x: -x.count(".")):
+                model = sub_models[path]
+                model_instance = model(**sub_kwargs[path])
+                if "." in path:
+                    parent_path, parent_kwarg = path.rsplit(".", 1)
+                    sub_kwargs[parent_path][parent_kwarg] = model_instance
+                else:
+                    selected_kwargs[path] = model_instance
 
             for kwarg in to_remove:
                 del selected_kwargs[kwarg]
