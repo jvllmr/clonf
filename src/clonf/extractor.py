@@ -40,12 +40,9 @@ def extract_cli_info(model: type[BaseModel]) -> list[ClonfAnnotation]:
                 name = field_info.alias or field
                 sub_cli_info.name = f"{name}-{sub_cli_info.name}"
                 if sub_cli_info._sub_path is None:
-                    sub_cli_info._sub_path = (name, field_info.annotation)
+                    sub_cli_info._sub_path = name
                 else:
-                    sub_cli_info._sub_path = (
-                        f"{name}.{sub_cli_info._sub_path[0]}",
-                        sub_cli_info._sub_path[1],
-                    )
+                    sub_cli_info._sub_path = f"{name}.{sub_cli_info._sub_path}"
             extracted.extend(sub_cli_infos)
 
         for meta in field_info.metadata:
