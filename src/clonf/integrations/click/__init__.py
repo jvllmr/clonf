@@ -9,7 +9,6 @@ from ...annotations import (
     ClonfAnnotation,
     CliArgument,
     CliOption,
-    is_pydantic_model_annotation,
 )
 from ...extractor import extract_cli_info
 import typing as t
