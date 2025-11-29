@@ -21,9 +21,15 @@
       "enabled": false
     },
     {
-      "description": "Do not update click",
+      "description": "Don't update dependencies that dropped python 3.9 too soon...",
       "matchManagers": ["pep621"],
-      "matchPackageNames": ["click"],
+      "matchPackageNames": [
+        "platformdirs",
+        "click",
+        "pre-commit",
+        "cfgv",
+        "pydantic-settings"
+      ],
       "enabled": false
     }
   ]
