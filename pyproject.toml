@@ -47,7 +47,7 @@ build-backend = "pdm.backend"
 
 [dependency-groups]
 test = ["pytest>=8.4.2", "pytest-cov>=7.0.0"]
-lint = ["mypy>=1.19.1", "ruff>=0.15.0", "pre-commit>=4.3.0"]
+lint = ["mypy>=1.19.1", "ruff>=0.15.1", "pre-commit>=4.3.0"]
 dev = ["pydantic-settings>=2.11.0"]
 
 
