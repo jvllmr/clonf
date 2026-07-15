@@ -3,7 +3,7 @@ name = "clonf"
 
 description = "Declaratively connect cli and config definition using pydantic"
 authors = [{ name = "Jan Vollmer", email = "jan@vllmr.dev" }]
-dependencies = ["pydantic>=2.13.4", "typing-extensions>=4.15.0"]
+dependencies = ["pydantic>=2.13.4", "typing-extensions>=4.16.0"]
 requires-python = ">=3.9"
 readme = "README.md"
 license = { text = "MIT" }
@@ -47,7 +47,7 @@ build-backend = "pdm.backend"
 
 [dependency-groups]
 test = ["pytest>=8.4.2", "pytest-cov>=7.1.0"]
-lint = ["mypy>=1.19.1", "ruff>=0.15.18", "pre-commit>=4.3.0"]
+lint = ["mypy>=1.19.1", "ruff>=0.15.21", "pre-commit>=4.3.0"]
 dev = ["pydantic-settings>=2.11.0"]
 
 
