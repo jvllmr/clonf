@@ -83,6 +83,7 @@ from clonf import CliArgument
 import pathlib
 import click
 
+
 class Config(BaseModel):
     file_path: Annotated[pathlib.Path, CliArgument(), click.Path(exists=True)]
 ```
